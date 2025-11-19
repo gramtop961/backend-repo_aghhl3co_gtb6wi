@@ -12,7 +12,7 @@ Model name is converted to lowercase for the collection name:
 """
 
 from pydantic import BaseModel, Field
-from typing import Optional
+from typing import Optional, List, Dict, Any
 
 # Example schemas (replace with your own):
 
@@ -38,11 +38,16 @@ class Product(BaseModel):
     category: str = Field(..., description="Product category")
     in_stock: bool = Field(True, description="Whether product is in stock")
 
-# Add your own schemas here:
-# --------------------------------------------------
-
-# Note: The Flames database viewer will automatically:
-# 1. Read these schemas from GET /schema endpoint
-# 2. Use them for document validation when creating/editing
-# 3. Handle all database operations (CRUD) directly
-# 4. You don't need to create any database endpoints!
+# Replix AI generation history schema
+class Generation(BaseModel):
+    """
+    Stores each plugin generation request/response
+    Collection name: "generation"
+    """
+    plugin_name: str
+    package_name: str
+    description: str
+    api: str = Field("spigot", description="Minecraft API target (spigot/paper/bukkit)")
+    commands: List[Dict[str, Any]] = Field(default_factory=list)
+    files: List[str] = Field(default_factory=list, description="List of file paths created in the archive")
+    archive_size: Optional[int] = None
